@@ -1,0 +1,17 @@
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\bin\Debug\net6.0\Services.deps.json
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\bin\Debug\net6.0\Services.dll
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\bin\Debug\net6.0\Services.pdb
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\bin\Debug\net6.0\BusinessObject.dll
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\bin\Debug\net6.0\DataAccess.dll
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\bin\Debug\net6.0\BusinessObject.pdb
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\bin\Debug\net6.0\DataAccess.pdb
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\obj\Debug\net6.0\Services.csproj.AssemblyReference.cache
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\obj\Debug\net6.0\Services.GeneratedMSBuildEditorConfig.editorconfig
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\obj\Debug\net6.0\Services.AssemblyInfoInputs.cache
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\obj\Debug\net6.0\Services.AssemblyInfo.cs
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\obj\Debug\net6.0\Services.csproj.CoreCompileInputs.cache
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\obj\Debug\net6.0\Services.csproj.CopyComplete
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\obj\Debug\net6.0\Services.dll
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\obj\Debug\net6.0\refint\Services.dll
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\obj\Debug\net6.0\Services.pdb
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Services\obj\Debug\net6.0\ref\Services.dll
