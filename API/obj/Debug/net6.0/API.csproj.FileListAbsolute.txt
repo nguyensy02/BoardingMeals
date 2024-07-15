@@ -72,3 +72,4 @@ D:\FPTU\Summer2024\PRN231\BoardingMeals\API\obj\Debug\net6.0\API.genruntimeconfi
 D:\FPTU\Summer2024\PRN231\BoardingMeals\API\obj\Debug\net6.0\ref\API.dll
 D:\FPTU\Summer2024\PRN231\BoardingMeals\API\bin\Debug\net6.0\Services.dll
 D:\FPTU\Summer2024\PRN231\BoardingMeals\API\bin\Debug\net6.0\Services.pdb
+D:\FPTU\Summer2024\PRN231\BoardingMeals\API\obj\Debug\net6.0\API.sourcelink.json

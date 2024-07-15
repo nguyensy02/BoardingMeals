@@ -24,5 +24,7 @@ namespace API.Controllers
             var users = _userService.GetUsers();
             return Ok(users);
         }
+
+
     }
 }
