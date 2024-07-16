@@ -19,7 +19,32 @@ namespace Services.Service
 
         public void AddUser(User user)
         {
-            throw new NotImplementedException();
+            try
+            {
+
+                _dao.AddUser(user);
+            }
+            catch (Exception e)
+            {
+                // Log the exception
+                Console.WriteLine($"Error occurred while adding user: {user.Id}", e);
+
+                // Optionally, wrap and rethrow the exception
+                throw new ApplicationException("An error occurred while adding the user. Please try again later.", e);
+            }
+        }
+
+        public User GetById(int id)
+        {
+            try
+            {
+                return _dao.GetUserById(id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error occurred while getting user", e);
+                throw;
+            }
         }
 
         public User GetUserByLogin(string username, string password)
@@ -41,7 +66,14 @@ namespace Services.Service
 
         public void UpdateUser(User user)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _dao.UpdateUser(user);
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
         }
     }
 }

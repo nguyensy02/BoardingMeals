@@ -13,3 +13,4 @@ D:\FPTU\Summer2024\PRN231\BoardingMeals\DataAccess\obj\Debug\net6.0\DataAccess.d
 D:\FPTU\Summer2024\PRN231\BoardingMeals\DataAccess\obj\Debug\net6.0\refint\DataAccess.dll
 D:\FPTU\Summer2024\PRN231\BoardingMeals\DataAccess\obj\Debug\net6.0\DataAccess.pdb
 D:\FPTU\Summer2024\PRN231\BoardingMeals\DataAccess\obj\Debug\net6.0\ref\DataAccess.dll
+D:\FPTU\Summer2024\PRN231\BoardingMeals\DataAccess\obj\Debug\net6.0\DataAccess.sourcelink.json

@@ -17,11 +17,17 @@ namespace DataAccess
             _context = context;
         }
 
-        public List<Student> GetStudentList() => _context.Students.ToList();
+        public List<Student> GetStudentList() => _context.Students
+            .Include(s => s.Class)
+            .Include(s=> s.Parent)
+            .ToList();
 
         public Student GetStudentById(int id)
         {
-            return _context.Students.FirstOrDefault(student => student.Id == id);
+            return _context.Students
+                .Include(s=>s.Class)
+                .Include(s=>s.Parent)
+                .FirstOrDefault(student => student.Id == id);
         }
 
         public void AddStudent(Student student)
@@ -41,5 +47,6 @@ namespace DataAccess
             _context.Students.Remove(student);
             _context.SaveChanges();
         }
+
     }
 }

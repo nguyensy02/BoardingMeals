@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BusinessObject.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,12 @@ namespace Services.IService
 {
     public interface IMealService
     {
+        List<Meal> GetMealsByDate(DateTime fromDate, DateTime toDate);
+
+        int AddMeal(Meal meal);
+
+        void UpdateMeal(Meal meal);
+
+
     }
 }

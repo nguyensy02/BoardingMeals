@@ -24,10 +24,11 @@ namespace DataAccess
             return _context.Meals.FirstOrDefault(meal => meal.Id == id);
         }
 
-        public void AddMeal(Meal meal)
+        public int AddMeal(Meal meal)
         {
             _context.Meals.Add(meal);
             _context.SaveChanges();
+            return meal.Id;
         }
 
         public void UpdateMeal(Meal meal)
@@ -40,6 +41,15 @@ namespace DataAccess
         {
             _context.Meals.Remove(meal);
             _context.SaveChanges();
+        }
+
+        public List<Meal> GetMealByDate(DateTime fromDate, DateTime toDate)
+        {
+            return _context.Meals
+                .Include(m => m.MealFoods)
+                .ThenInclude(mf => mf.Food)
+                .Where(m => m.Day >= fromDate && m.Day <= toDate)
+                .ToList();
         }
     }
 }

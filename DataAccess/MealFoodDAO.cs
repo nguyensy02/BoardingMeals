@@ -41,5 +41,14 @@ namespace DataAccess
             _context.MealFoods.Remove(mealFood);
             _context.SaveChanges();
         }
+
+        public MealFood FindMealFood(int mealId, int foodId)
+        {
+            return _context.MealFoods.FirstOrDefault(mf=>mf.MeadId == mealId && mf.FoodId == foodId);
+        }
+        public List<MealFood> GetByMealId(int mealId)
+        {
+            return _context.MealFoods.Where(mf => mf.MeadId==mealId).ToList();
+        }
     }
 }

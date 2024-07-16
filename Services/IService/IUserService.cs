@@ -15,6 +15,8 @@ namespace Services.IService
         void UpdateUser(User user) ;
 
         void AddUser(User user) ;
+
+        User GetById(int id) ;
     }
 }
     

@@ -12,3 +12,4 @@ D:\FPTU\Summer2024\PRN231\BoardingMeals\BusinessObject\obj\Debug\net6.0\ref\Busi
 D:\FPTU\Summer2024\PRN231\BoardingMeals\BusinessObject\bin\Debug\net6.0\BusinessObject.runtimeconfig.json
 D:\FPTU\Summer2024\PRN231\BoardingMeals\BusinessObject\obj\Debug\net6.0\BusinessObject.csproj.AssemblyReference.cache
 D:\FPTU\Summer2024\PRN231\BoardingMeals\BusinessObject\obj\Debug\net6.0\BusinessObject.genruntimeconfig.cache
+D:\FPTU\Summer2024\PRN231\BoardingMeals\BusinessObject\obj\Debug\net6.0\BusinessObject.sourcelink.json

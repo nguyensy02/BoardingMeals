@@ -21,7 +21,8 @@ namespace API.Helper
             var claims = new[]
             {
                new Claim(ClaimTypes.NameIdentifier, user.UserName),
-               new Claim(ClaimTypes.Role, user.Role.Name)
+               new Claim(ClaimTypes.Role, user.Role.Name),
+               new Claim("UserID", user.Id.ToString())
             };
             var token = new JwtSecurityToken(_config["JwtSettings:Issuer"],
                 _config["JwtSettings:Audience"],
