@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link rel="stylesheet" href="./lib/bootstrap-4.3.1-dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>User Management</h1>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <input type="text" id="userName" class="form-control" placeholder="Username">
+            </div>
+            <div class="col-md-4">
+                <input type="password" id="password" class="form-control" placeholder="Password">
+            </div>
+            <div class="col-md-4">
+                <input type="text" id="fullName" class="form-control" placeholder="Full Name">
+            </div>
+            <div class="col-md-4">
+                <input type="text" id="phone" class="form-control" placeholder="Phone">
+            </div>
+            <div class="col-md-4">
+                <select id="role" class="form-control">
+                    <option value="parent">Parent</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="chef">Chef</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button id="addUser" class="btn btn-primary">Add User</button>
+            </div>
+        </div>
+        <div id="userList" class="row">
+            <!-- User list will be dynamically populated here -->
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editUserId">
+                    <div class="form-group">
+                        <label for="editFullName">Full Name</label>
+                        <input type="text" class="form-control" id="editFullName">
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserName">Username</label>
+                        <input type="text" class="form-control" id="editUserName">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPassword">Password</label>
+                        <input type="password" class="form-control" id="editPassword">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">Phone</label>
+                        <input type="text" class="form-control" id="editPhone">
+                    </div>
+                    <div class="form-group">
+                        <label for="editRole">Role</label>
+                        <select class="form-control" id="editRole">
+                            <option value="parent">Parent</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="chef">Chef</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveEditUser">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="./lib/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="./lib/bootstrap-4.3.1-dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(() => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Function to map role IDs to role names
+            function getRoleName(roleId) {
+                switch (roleId) {
+                    case 1:
+                        return 'admin';
+                    case 2:
+                        return 'teacher';
+                    case 3:
+                        return 'parent';
+                    case 4:
+                        return 'chef';
+                    default:
+                        return 'unknown';
+                }
+            }
+            function getRoleId(roleName) {
+                switch (roleName) {
+                    case 'admin':
+                        return 1;
+                    case 'teacher':
+                        return 2;
+                    case 'parent':
+                        return 3;
+                    case 'chef':
+                        return 4;
+                    default:
+                        return 'unknown';
+                }
+            }
+
+            // Function to fetch and display users
+            function fetchUsers() {
+                $.ajax({
+                    url: 'https://localhost:7201/api/User/GetAll',
+                    method: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    success: (users) => {
+                        $('#userList').empty();
+                        if (users) {
+                            users.forEach((user) => {
+                                const roleName = getRoleName(user.roleId);
+                                $('#userList').append(`
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="card-title">${user.fullName}</h5>
+                                                <p class="card-text">Username: ${user.userName}</p>
+                                                <p class="card-text">Phone: ${user.phone}</p>
+                                                <p class="card-text">Role: ${roleName}</p>
+                                                <button class="btn btn-sm btn-outline-primary editUser" data-id="${user.id}">Edit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `);
+                            });
+                        }
+                    },
+                    error: (err) => {
+                        console.error('Error fetching users:', err);
+                    }
+                });
+            }
+
+            // Fetch users on page load
+            fetchUsers();
+
+            // Add user button click handler
+            $('#addUser').click(() => {
+                let userName = $('#userName').val();
+                let password = $('#password').val();
+                let fullName = $('#fullName').val();
+                let phone = $('#phone').val();
+                let roleName = $('#role').val();
+                let roleId = getRoleId(roleName);
+
+                if (!userName || !password || !fullName || !phone || !roleName) {
+                    alert('All fields are required.');
+                    return;
+                }
+
+                $.ajax({
+                    url: 'https://localhost:7201/api/User/AddUser',
+                    method: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    data: JSON.stringify({ userName, password, fullName, phone, roleName }),
+                    success: (data) => {
+                        console.log('User added successfully:', data);
+                        fetchUsers(); // Refresh user list after adding
+                        $('#userName').val('');
+                        $('#password').val('');
+                        $('#fullName').val('');
+                        $('#phone').val('');
+                        $('#role').val('');
+                    },
+                    error: (err) => {
+                        console.error('Error adding user:', err);
+                    }
+                });
+            });
+
+            // Edit user button click handler (event delegation)
+            $(document).on('click', '.editUser', function () {
+                let userId = $(this).attr('data-id');
+                $.ajax({
+                    url: `https://localhost:7201/api/User/GetDetails/${userId}`,
+                    method: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    success: (user) => {
+                        $('#editUserId').val(user.id);
+                        $('#editFullName').val(user.fullName);
+                        $('#editUserName').val(user.userName);
+                        $('#editPassword').val(user.password);
+                        $('#editPhone').val(user.phone);
+                        $('#editRole').val(user.roleId);
+                        $('#editUserModal').modal('show');
+                    },
+                    error: (err) => {
+                        console.error('Error fetching user details:', err);
+                    }
+                });
+            });
+
+            // Save changes button click handler
+            $('#saveEditUser').click(() => {
+                let userId = $('#editUserId').val();
+                let fullName = $('#editFullName').val();
+                let userName = $('#editUserName').val();
+                let password = $('#editPassword').val();
+                let phone = $('#editPhone').val();
+                let role = $('#editRole').val();
+
+                if (!userId || !fullName || !userName || !password || !phone || !role) {
+                    alert('All fields are required.');
+                    return;
+                }
+
+                $.ajax({
+                    url: `https://localhost:7201/api/User/UpdateUser/${userId}`,
+                    method: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    data: JSON.stringify({ fullName, userName, password, phone, roleName:role }),
+                    success: (data) => {
+                        console.log('User updated successfully:', data);
+                        fetchUsers(); // Refresh user list after update
+                        $('#editUserModal').modal('hide');
+                    },
+                    error: (err) => {
+                        console.error('Error updating user:', err);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

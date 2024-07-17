@@ -25,6 +25,7 @@ namespace API.Controllers
             var classes = _foodService.GetFoodes().ToList();
             var result = classes.Select(f => new FoodDTO
             {
+                Id = f.Id,
                 Name = f.Name,
                 Description = f.Description,
             });

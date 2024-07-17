@@ -47,7 +47,7 @@ namespace BusinessObject.Models
             {
                 entity.ToTable("Food");
 
-                entity.Property(e => e.Description).HasColumnType("text");
+                entity.Property(e => e.Description).HasColumnType("nvarchar(max)");
 
                 entity.Property(e => e.Name).HasMaxLength(50);
             });

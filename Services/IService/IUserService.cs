@@ -17,6 +17,8 @@ namespace Services.IService
         void AddUser(User user) ;
 
         User GetById(int id) ;
+
+        User GetUserInfo(int id) ;
     }
 }
     

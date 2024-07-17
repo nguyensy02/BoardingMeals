@@ -82,7 +82,7 @@ namespace API.Controllers
 
 
         [Authorize(Roles = "admin")]
-        [HttpPut("[action]/{userId}")]
+        [HttpGet("[action]/{userId}")]
         public ActionResult GetDetails(int userId)
         {
             var user = _userService.GetById(userId);

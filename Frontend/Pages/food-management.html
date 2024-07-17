@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Food Management</title>
+    <link
+      rel="stylesheet"
+      href="./lib/bootstrap-4.3.1-dist/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Food Management</h1>
+      <div id="food-list" class="mb-4"></div>
+      <button id="add-food" class="btn btn-primary mb-3">Add Food</button>
+      <div id="food-form" style="display:none;">
+        <h2 id="form-title">Add New Food</h2>
+        <div class="form-group">
+          <label for="food-name">Name</label>
+          <input type="text" class="form-control" id="food-name" />
+        </div>
+        <div class="form-group">
+          <label for="food-description">Description</label>
+          <input type="text" class="form-control" id="food-description" />
+        </div>
+        <button id="save-food" class="btn btn-success">Save</button>
+        <button id="cancel" class="btn btn-secondary">Cancel</button>
+      </div>
+    </div>
+    <script src="./lib/jquery-3.7.1.min.js"></script>
+    <script>
+      $(document).ready(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const fetchFood = () => {
+          $.ajax({
+            url: 'https://localhost:7201/api/Food/GetAll',
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` },
+            success: (data) => {
+              let foodList = '<ul class="list-group">';
+              data.forEach(food => {
+                foodList += `
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${food.name}
+                    <button class="btn btn-warning btn-sm edit-food" data-id="${food.id}">Edit</button>
+                  </li>`;
+              });
+              foodList += '</ul>';
+              $('#food-list').html(foodList);
+            },
+            error: (err) => {
+              console.error('Error fetching food:', err);
+            }
+          });
+        };
+
+        fetchFood();
+
+        $('#add-food').click(() => {
+          $('#food-form').show();
+          $('#form-title').text('Add New Food');
+          $('#food-name').val('');
+          $('#food-description').val('');
+          $('#save-food').data('id', '');
+        });
+
+        $('#save-food').click(() => {
+          const id = $('#save-food').data('id');
+          const name = $('#food-name').val();
+          const description = $('#food-description').val();
+          const data = JSON.stringify({ name, description });
+
+          const url = id ? `https://localhost:7201/api/Food/UpdateFood/${id}` : 'https://localhost:7201/api/Food/AddFood';
+          const method = id ? 'PUT' : 'POST';
+
+          $.ajax({
+            url,
+            method,
+            headers: { 'Authorization': `Bearer ${token}` },
+            contentType: 'application/json; charset=utf-8',
+            data,
+            success: () => {
+              $('#food-form').hide();
+              fetchFood();
+            },
+            error: (err) => {
+              console.error('Error saving food:', err);
+            }
+          });
+        });
+
+        $('#cancel').click(() => {
+          $('#food-form').hide();
+        });
+
+        $(document).on('click', '.edit-food', function() {
+          const id = $(this).data('id');
+          $.ajax({
+            url: `https://localhost:7201/api/Food/GetFood/${id}`,
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` },
+            success: (data) => {
+              $('#food-form').show();
+              $('#form-title').text('Edit Food');
+              $('#food-name').val(data.name);
+              $('#food-description').val(data.description);
+              $('#save-food').data('id', id);
+            },
+            error: (err) => {
+              console.error('Error fetching food details:', err);
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

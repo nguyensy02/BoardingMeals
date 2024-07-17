@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D4AD33C3-B6BA-4FD6-A9A0-6F04628655FF}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Frontend</RootNamespace>
+    <AssemblyName>Frontend</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="Pages\lib\bootstrap-4.3.1-dist\css\bootstrap-grid.css.map" />
+    <None Include="Pages\lib\bootstrap-4.3.1-dist\css\bootstrap-grid.min.css.map" />
+    <None Include="Pages\lib\bootstrap-4.3.1-dist\css\bootstrap-reboot.css.map" />
+    <None Include="Pages\lib\bootstrap-4.3.1-dist\css\bootstrap-reboot.min.css.map" />
+    <None Include="Pages\lib\bootstrap-4.3.1-dist\css\bootstrap.css.map" />
+    <None Include="Pages\lib\bootstrap-4.3.1-dist\css\bootstrap.min.css.map" />
+    <None Include="Pages\lib\bootstrap-4.3.1-dist\js\bootstrap.bundle.js.map" />
+    <None Include="Pages\lib\bootstrap-4.3.1-dist\js\bootstrap.bundle.min.js.map" />
+    <None Include="Pages\lib\bootstrap-4.3.1-dist\js\bootstrap.js.map" />
+    <None Include="Pages\lib\bootstrap-4.3.1-dist\js\bootstrap.min.js.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Pages\directors.html" />
+    <Content Include="Pages\lib\bootstrap-4.3.1-dist\css\bootstrap-grid.css" />
+    <Content Include="Pages\lib\bootstrap-4.3.1-dist\css\bootstrap-grid.min.css" />
+    <Content Include="Pages\lib\bootstrap-4.3.1-dist\css\bootstrap-reboot.css" />
+    <Content Include="Pages\lib\bootstrap-4.3.1-dist\css\bootstrap-reboot.min.css" />
+    <Content Include="Pages\lib\bootstrap-4.3.1-dist\css\bootstrap.css" />
+    <Content Include="Pages\lib\bootstrap-4.3.1-dist\css\bootstrap.min.css" />
+    <Content Include="Pages\lib\bootstrap-4.3.1-dist\js\bootstrap.bundle.js" />
+    <Content Include="Pages\lib\bootstrap-4.3.1-dist\js\bootstrap.bundle.min.js" />
+    <Content Include="Pages\lib\bootstrap-4.3.1-dist\js\bootstrap.js" />
+    <Content Include="Pages\lib\bootstrap-4.3.1-dist\js\bootstrap.min.js" />
+    <Content Include="Pages\lib\jquery-3.7.1.min.js" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

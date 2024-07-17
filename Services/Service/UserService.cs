@@ -26,10 +26,7 @@ namespace Services.Service
             }
             catch (Exception e)
             {
-                // Log the exception
                 Console.WriteLine($"Error occurred while adding user: {user.Id}", e);
-
-                // Optionally, wrap and rethrow the exception
                 throw new ApplicationException("An error occurred while adding the user. Please try again later.", e);
             }
         }
@@ -50,6 +47,19 @@ namespace Services.Service
         public User GetUserByLogin(string username, string password)
         {
             return _dao.GetUserByLogin(username, password);
+        }
+
+        public User GetUserInfo(int id)
+        {
+            try
+            {
+                return _dao.GetUserInfo(id);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public List<User> GetUsers()

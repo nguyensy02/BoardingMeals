@@ -25,16 +25,17 @@ namespace API.Controllers
             var classes = _classService.GetClasses().ToList();
             var result = classes.Select(c => new ClassDTO
             {
+                Id=c.Id,
                 Name = c.Name,
             });
             return Ok(result);
         }
 
-       /* [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         [HttpPost("[action]")]
         public IActionResult AddClass([FromBody] ClassDTO newClassDTO) 
         {
-            var newClass = new ConfigureSwaggerOptions()
+            var newClass = new Class()
             {
                 Name = newClassDTO.Name,
             };
@@ -62,6 +63,6 @@ namespace API.Controllers
             };
             return Ok(result);
         }
-*/
+
     }
 }

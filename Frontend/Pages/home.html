@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link rel="stylesheet" href="./lib/bootstrap-4.3.1-dist/css/bootstrap.min.css" />
+</head>
+
+<body>
+    <div class="container">
+        <h1>Welcome, <span id="username"></span>!</h1>
+        <div id="for-admin" class="role-content">
+            You are Admin 
+            <br>
+            <a href="food-management.html">Food Management</a>
+            <br>
+            <a href="class-management.html">Class Management</a>
+            <br>
+            <a href="user-management.html">User Management</a>
+        </div>
+        <div id="for-chef" class="role-content">
+            You are chef
+            <br>
+            <a href="food-management.html">Food Management</a>
+        </div>
+        <div id="for-teacher" class="role-content">
+            You are teacher
+            <br>
+            <a href="class-management.html">Class Management</a>
+        </div>
+        <div id="for-parent" class="role-content">
+            You are parent
+            <br>
+        </div>
+        <div id="role-specific-content"></div>
+        <button id="logout" class="btn btn-danger mt-3">Logout</button>
+    </div>
+    <script src="./lib/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(() => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            $.ajax({
+                url: 'https://localhost:7201/api/User/GetCurrentUser',
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` },
+                success: (user) => {
+                    $('#username').text(user.fullName);
+                    $('.role-content').hide();
+                    switch (user.roleId) {
+                        case 1:
+                            $('#for-admin').show();
+                            break;
+                        case 2:
+                            $('#for-teacher').show();
+                            break;
+                        case 3:
+                            $('#for-parent').show();
+                            break;
+                        case 4:
+                            $('#for-chef').show();
+                            break;
+                        default:
+                            // Handle unknown role
+                            console.error('Unknown role ID:', user.roleId);
+                    }
+                },
+                error: (err) => {
+                    console.error('Error fetching user:', err);
+                    window.location.href = 'login.html';
+                }
+            });
+
+            const loadRoleSpecificContent = (role) => {
+                let content = '';
+                if (role === 'teacher') {
+                    content = `
+              <h2>Your Students</h2>
+              <div id="student-list"></div>
+            `;
+                    $('#role-specific-content').html(content);
+                    fetchStudents();
+                } else if (role === 'chef') {
+                    content = `
+              <h2>Food Menu</h2>
+              <div id="food-list"></div>
+            `;
+                    $('#role-specific-content').html(content);
+                    fetchFood();
+                } else {
+                    content = '<h2>No specific content for your role</h2>';
+                    $('#role-specific-content').html(content);
+                }
+            };
+
+            const fetchStudents = () => {
+                $.ajax({
+                    url: 'https://localhost:7201/api/Student/GetAll',
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    success: (students) => {
+                        let studentList = students.map(student => `<p>${student.name}</p>`).join('');
+                        $('#student-list').html(studentList);
+                    },
+                    error: (err) => {
+                        console.error('Error fetching students:', err);
+                    }
+                });
+            };
+
+            const fetchFood = () => {
+                $.ajax({
+                    url: 'https://localhost:7201/api/Food/GetAll',
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    success: (food) => {
+                        let foodList = food.map(item => `<p>${item.name}</p>`).join('');
+                        $('#food-list').html(foodList);
+                    },
+                    error: (err) => {
+                        console.error('Error fetching food:', err);
+                    }
+                });
+            };
+
+            $('#logout').click(() => {
+                localStorage.removeItem('token');
+                window.location.href = 'login.html';
+            });
+        });
+    </script>
+</body>
+
+</html>

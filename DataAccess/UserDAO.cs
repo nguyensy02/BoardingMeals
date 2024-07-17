@@ -47,5 +47,10 @@ namespace DataAccess
             var user = _context.Users.Include(u => u.Role).FirstOrDefault(u => u.UserName == username && u.Password == password);
             return user;
         }
+
+        public User GetUserInfo(int id)
+        {
+            return _context.Users.Include(u => u.Role).FirstOrDefault(u => u.Id == id);
+        }
     }
 }

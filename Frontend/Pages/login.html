@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link
+      rel="stylesheet"
+      href="./lib/bootstrap-4.3.1-dist/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Login</h1>
+      <div class="w-50 mx-auto mt-5">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" class="form-control" placeholder="Enter username" />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Enter password" />
+        </div>
+        <button class="btn btn-primary" id="login">Login</button>
+      </div>
+    </div>
+    <script src="./lib/jquery-3.7.1.min.js"></script>
+    <script>
+      $(document).ready(() => {
+        const login = (() => {
+          let username = $("#username").val(),
+              password = $("#password").val();
+          $.ajax({
+            url: 'https://localhost:7201/api/Login',
+            method: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({ username, password }),
+            success: (token) => {
+              localStorage.setItem('token', token);
+              window.location.href = 'home.html';
+            },
+            error: (err) => {
+              alert('Login failed!');
+              console.error('Error:', err);
+            }
+          });
+        });
+        $("#login").click(login);
+
+        $(document).keypress((e) => {
+        if (e.which === 13) {
+            login();
+        }
+        });
+      });
+    </script>
+  </body>
+</html>
