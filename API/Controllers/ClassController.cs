@@ -30,11 +30,11 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "admin")]
+       /* [Authorize(Roles = "admin")]
         [HttpPost("[action]")]
         public IActionResult AddClass([FromBody] ClassDTO newClassDTO) 
         {
-            var newClass = new Class()
+            var newClass = new ConfigureSwaggerOptions()
             {
                 Name = newClassDTO.Name,
             };
@@ -62,6 +62,6 @@ namespace API.Controllers
             };
             return Ok(result);
         }
-
+*/
     }
 }
