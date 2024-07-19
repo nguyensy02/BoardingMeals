@@ -52,5 +52,6 @@ namespace DataAccess
         {
             return _context.Users.Include(u => u.Role).FirstOrDefault(u => u.Id == id);
         }
+        //return
     }
 }
