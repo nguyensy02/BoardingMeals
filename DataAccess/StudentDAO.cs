@@ -48,5 +48,12 @@ namespace DataAccess
             _context.SaveChanges();
         }
 
+        public List<Student> GetStudentsByClassId(int classId)
+        {
+            return _context.Students
+                .Include(s => s.Class)
+                .Include(s => s. Parent)
+                .Where(s => s.ClassId == classId).ToList();
+        }
     }
 }

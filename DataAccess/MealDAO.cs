@@ -24,6 +24,11 @@ namespace DataAccess
             return _context.Meals.FirstOrDefault(meal => meal.Id == id);
         }
 
+        public bool IsExistMeal(int chefId, DateTime day, int slot)
+        {
+            return _context.Meals.Any(m => m.ChefId == chefId && m.Slot == slot && m.Day == day);
+        }
+
         public int AddMeal(Meal meal)
         {
             _context.Meals.Add(meal);

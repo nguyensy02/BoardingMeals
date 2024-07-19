@@ -143,3 +143,4 @@ D:\FPTU\Summer2024\PRN231\BoardingMeals\UnitTests\bin\Debug\net6.0\BusinessObjec
 D:\FPTU\Summer2024\PRN231\BoardingMeals\UnitTests\bin\Debug\net6.0\DataAccess.dll
 D:\FPTU\Summer2024\PRN231\BoardingMeals\UnitTests\bin\Debug\net6.0\DataAccess.pdb
 D:\FPTU\Summer2024\PRN231\BoardingMeals\UnitTests\bin\Debug\net6.0\BusinessObject.pdb
+D:\FPTU\Summer2024\PRN231\BoardingMeals\UnitTests\obj\Debug\net6.0\UnitTests.sourcelink.json

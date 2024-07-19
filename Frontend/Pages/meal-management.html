@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Meal Management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <a href="home.html">Back to home</a>
+        <h1>Meal Management</h1>
+        <div class="form-group">
+            <label for="startDatePicker">Select Start Date:</label>
+            <input type="date" id="startDatePicker">
+        </div>
+        <div class="form-group">
+            <label for="endDatePicker">Select End Date:</label>
+            <input type="date" id="endDatePicker">
+        </div>
+        <button id="loadMeals" class="btn btn-primary mt-2">Load Meals</button>
+
+        <div id="dateRange" class="mt-3"></div>
+
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr id="table-header">
+                    <th>Slot</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <tr>
+                    <td>Morning</td>
+                </tr>
+                <tr>
+                    <td>Lunch</td>
+                </tr>
+                <tr>
+                    <td>Afternoon</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Add/Edit Meal Modal -->
+        <div class="modal fade" id="mealModal" tabindex="-1" role="dialog" aria-labelledby="mealModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="mealModalLabel">Manage Meal</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="foodSelect">Select Food</label>
+                            <select id="foodSelect" class="form-control"></select>
+                            <button id="addFood" class="btn btn-primary mt-2">Add Food</button>
+                        </div>
+                        <ul id="foodList" class="list-group">
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="saveMeal">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            var userId;
+            $.ajax({
+                url: 'https://localhost:7201/api/User/GetCurrentUser',
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` },
+                success: (user) => {
+                    userId = user.id;
+                    $('#username').text(user.fullName);
+                    $('.role-content').hide();
+                    switch (user.roleId) {
+                        case 1:
+                            $('#for-admin').show();
+                            break;
+                        case 2:
+                            $('#for-teacher').show();
+                            break;
+                        case 3:
+                            $('#for-parent').show();
+                            break;
+                        case 4:
+                            $('#for-chef').show();
+                            break;
+                        default:
+                            // Handle unknown role
+                            console.error('Unknown role ID:', user.roleId);
+                    }
+                },
+                error: (err) => {
+                    console.error('Error fetching user:', err);
+                    window.location.href = 'login.html';
+                }
+            });
+
+            var meals = [];
+            var foods = [];
+            // Calculate default dates
+            const today = new Date();
+            const endDate = today.toISOString().split('T')[0]; // Today's date in YYYY-MM-DD format
+            const startDate = new Date();
+            startDate.setDate(today.getDate() - 7);
+            const startDateString = startDate.toISOString().split('T')[0]; // 7 days ago in YYYY-MM-DD format
+            // Set default values for date pickers
+            $('#startDatePicker').val(startDateString);
+            $('#endDatePicker').val(endDate);
+
+            function loadFoods() {
+                $.ajax({
+                    url: 'https:/localhost:7201/api/Food/GetAll',
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    success: function (data) {
+                        foods = data;
+                        $('#foodSelect').empty();
+                        foods.forEach(food => {
+                            $('#foodSelect').append(`<option value="${food.id}">${food.name}</option>`);
+                        });
+                    }
+                });
+            }
+
+            function loadMeals(fromDate, toDate) {
+                $.ajax({
+                    url: `https:/localhost:7201/api/Meal/GetMealByDate/${fromDate}/${toDate}`,
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    success: function (data) {
+                        meals = data;
+                        renderMeals(fromDate, toDate);
+                    }
+                });
+            }
+
+            function renderMeals(fromDate, toDate) {
+                // Define slot mappings
+                const slotMapping = {
+                    'Morning': 1,
+                    'Afternoon': 2,
+                    'Evening': 3
+                };
+
+                // Calculate the date range and create headers
+                const dateRangeHtml = [];
+                let currentDate = new Date(fromDate);
+                const endDate = new Date(toDate);
+
+                while (currentDate <= endDate) {
+                    const day = currentDate.toISOString().split('T')[0]; // Use ISO date format for consistency
+                    dateRangeHtml.push(`<th>${day}</th>`);
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+
+                $('#table-header').html(`<th>Slot</th>${dateRangeHtml.join('')}`);
+
+                // Clear the previous rows
+                $('#table-body').empty();
+
+                // Create rows for each slot
+                const slots = ['Morning', 'Afternoon', 'Evening'];
+                slots.forEach(slot => {
+                    let rowHtml = `<tr data-slot="${slotMapping[slot]}"><td>${slot}</td>`;
+                    dateRangeHtml.forEach(() => {
+                        rowHtml += '<td></td>'; // Add empty cells for each date
+                    });
+                    rowHtml += '</tr>';
+                    $('#table-body').append(rowHtml);
+                });
+
+                // Render the meals into the table cells
+                $('tbody tr').each(function () {
+                    const slot = $(this).data('slot');
+                    $(this).find('td:not(:first)').each(function (index) {
+                        const date = new Date(new Date(fromDate).setDate(new Date(fromDate).getDate() + index));
+                        const dateString = date.toISOString().split('T')[0]; // Use ISO date format for consistency
+
+                        const cellMeals = meals.filter(meal => meal.day.split('T')[0] === dateString && meal.slot == slot);
+                        $(this).empty();
+                        // if (cellMeals.length === 0) {
+                        //     console.log(`No meals found for date: ${dateString} and slot: ${slot}`);
+                        // }
+                        cellMeals.forEach(meal => {
+                            meal.foods.forEach(food => {
+                                $(this).append(`<div>${food.name}</div>`);
+                            });
+                        });
+                    });
+                });
+            }
+
+            $('#loadMeals').click(function () {
+                const startDate = $('#startDatePicker').val();
+                const endDate = $('#endDatePicker').val();
+
+                if (!startDate || !endDate || new Date(startDate) > new Date(endDate)) {
+                    alert('Please select a valid date range.');
+                    return;
+                }
+
+                $('#dateRange').html(`<h3>Showing meals from ${startDate} to ${endDate}</h3>`);
+                loadMeals(startDate, endDate);
+            });
+            const startValue = $('#startDatePicker').val();
+            const endValue = $('#endDatePicker').val();
+            loadMeals(startValue, endValue);
+
+            $('tbody').on('click', 'td:not(:first)', function () {
+                // Get the column index
+                const columnIndex = $(this).index();
+
+                // Find the corresponding day from the header
+                const day = $('#table-header th').eq(columnIndex).text();
+
+                // Find the slot from the row
+                const slot = $(this).closest('tr').data('slot');
+
+                // Find the meals for the selected day and slot
+                const cellMeals = meals.filter(meal => meal.day.split('T')[0] === day && meal.slot == slot);
+
+                $('#foodList').empty();
+                cellMeals.forEach(meal => {
+                    meal.foods.forEach(food => {
+                        $('#foodList').append(`
+                                            <li class="list-group-item" data-id="${food.id}">
+                                                ${food.name} 
+                                                <button class="btn btn-info btn-sm float-right view-details" data-id="${food.id}">Details</button>
+                                                <button class="btn btn-danger btn-sm float-right remove-food">Remove</button>
+                                            </li>
+                        `);
+                    });
+                });
+                $('#mealModal').modal('show');
+                $('#mealModal').data('day', day).data('slot', slot).data('id', cellMeals[0].id).modal('show');
+
+            });
+            $(document).on('click', '.view-details', function () {
+                const foodId = $(this).data('id');
+                $.ajax({
+                    url: `https://localhost:7201/api/Food/GetFood/${foodId}`,
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    success: function (food) {
+                        alert(`Name: ${food.name}\nDescription: ${food.description}`);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching food details:', error);
+                        alert('An error occurred while fetching food details.');
+                    }
+                });
+            });
+            $('#addFood').click(function () {
+                const selectedFoodId = $('#foodSelect').val();
+                const selectedFood = foods.find(food => food.id == selectedFoodId);
+
+                if (selectedFood) {
+                    $('#foodList').append(`
+            <li class="list-group-item" data-id="${selectedFood.id}">
+                ${selectedFood.name} 
+                <button class="btn btn-info btn-sm float-right view-details" data-id="${selectedFood.id}">Details</button>
+                <button class="btn btn-danger btn-sm float-right remove-food">Remove</button>
+            </li>
+        `);
+                }
+            });
+
+
+            $('#foodList').on('click', '.remove-food', function () {
+                $(this).closest('li').remove();
+            });
+
+            $('#saveMeal').click(function () {
+                const day = $('#mealModal').data('day');
+                const slot = $('#mealModal').data('slot');
+                const mealId = $('#mealModal').data('id');
+                const foodIds = $('#foodList li').map(function () {
+                    return $(this).data('id');
+                }).get();
+
+                const mealDTO = {
+                    id: mealId,
+                    day: day,
+                    slot: slot,
+                    chefId: userId, // You may need to adjust this based on actual logic
+                    chefName: "", // Replace with actual chef name
+                    foods: foodIds.map(id => ({
+                        id: id,
+                        name: "",
+                        description: ""
+                    }))
+                };
+                const url = `https://localhost:7201/api/Meal`;
+                const method = mealId ? 'PUT' : 'POST';
+
+                $.ajax({
+                    url: url,
+                    method: method,
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    contentType: 'application/json',
+                    data: JSON.stringify(mealDTO),
+                    success: function () {
+                        $('#mealModal').modal('hide');
+                        loadMeals($('#startDatePicker').val(), $('#endDatePicker').val());
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error saving meal:', error);
+                        alert('An error occurred while saving the meal.');
+                    }
+                });
+            });
+            loadFoods();
+        });
+    </script>
+</body>
+
+</html>

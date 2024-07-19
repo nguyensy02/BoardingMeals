@@ -10,6 +10,7 @@
 
 <body>
     <div class="container">
+        <a href="home.html">Back to home</a>
         <h1>User Management</h1>
         <div class="row mb-3">
             <div class="col-md-4">
@@ -96,6 +97,36 @@
                 window.location.href = 'login.html';
                 return;
             }
+            $.ajax({
+                url: 'https://localhost:7201/api/User/GetCurrentUser',
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` },
+                success: (user) => {
+                    $('#username').text(user.fullName);
+                    $('.role-content').hide();
+                    switch (user.roleId) {
+                        case 1:
+                            $('#for-admin').show();
+                            break;
+                        case 2:
+                            $('#for-teacher').show();
+                            break;
+                        case 3:
+                            $('#for-parent').show();
+                            break;
+                        case 4:
+                            $('#for-chef').show();
+                            break;
+                        default:
+                            // Handle unknown role
+                            console.error('Unknown role ID:', user.roleId);
+                    }
+                },
+                error: (err) => {
+                    console.error('Error fetching user:', err);
+                    window.location.href = 'login.html';
+                }
+            });
 
             // Function to map role IDs to role names
             function getRoleName(roleId) {

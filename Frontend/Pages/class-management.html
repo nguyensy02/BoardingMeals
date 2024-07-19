@@ -10,19 +10,130 @@
 
 <body>
     <div class="container">
+        <a href="home.html">Back to home</a>
         <h1>Class Management</h1>
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <input type="text" id="className" class="form-control" placeholder="Class Name">
-            </div>
-            <div class="col-md-4">
-                <button id="addClass" class="btn btn-primary">Add Class</button>
-            </div>
-        </div>
-        <div id="classList" class="row">
+        <div id="classList" class="row mb-3">
             <!-- Class list will be dynamically populated here -->
         </div>
+        <button class="btn btn-primary mb-3" id="addNewStudentButton">Add New Student</button>
+
     </div>
+
+    <!-- Class Details Modal -->
+    <div class="modal fade" id="classDetailsModal" tabindex="-1" role="dialog" aria-labelledby="classDetailsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="classDetailsModalLabel">Class Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h4 id="className"></h4>
+                    <div id="studentList" class="row">
+                        <!-- Student list will be dynamically populated here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div class="modal fade" id="editStudentModal" tabindex="-1" role="dialog" aria-labelledby="editStudentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editStudentModalLabel">Edit Student</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="editStudentId">
+                    <div class="form-group">
+                        <label for="editStudentFullName">Full Name</label>
+                        <input type="text" class="form-control" id="editStudentFullName">
+                    </div>
+                    <div class="form-group">
+                        <label for="editStudentDob">Date of Birth</label>
+                        <input type="date" class="form-control" id="editStudentDob">
+                    </div>
+                    <div class="form-group">
+                        <label for="editStudentMealLevel">Meal Level</label>
+                        <select class="form-control" id="editStudentMealLevel">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editStudentClass">Class</label>
+                        <select class="form-control" id="editStudentClass"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editStudentParent">Parent</label>
+                        <select class="form-control" id="editStudentParent"></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveEditStudent">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Student Modal -->
+    <div class="modal fade" id="addStudentModal" tabindex="-1" role="dialog" aria-labelledby="addStudentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addStudentModalLabel">Add New Student</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="addStudentFullName">Full Name</label>
+                        <input type="text" class="form-control" id="addStudentFullName">
+                    </div>
+                    <div class="form-group">
+                        <label for="addStudentDob">Date of Birth</label>
+                        <input type="date" class="form-control" id="addStudentDob">
+                    </div>
+                    <div class="form-group">
+                        <label for="addStudentMealLevel">Meal Level</label>
+                        <select class="form-control" id="addStudentMealLevel">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="addStudentClass">Class</label>
+                        <select class="form-control" id="addStudentClass"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="addStudentParent">Parent</label>
+                        <select class="form-control" id="addStudentParent"></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveAddStudent">Add Student</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- jQuery -->
     <script src="./lib/jquery-3.7.1.min.js"></script>
@@ -35,6 +146,71 @@
                 window.location.href = 'login.html';
                 return;
             }
+            $.ajax({
+                url: 'https://localhost:7201/api/User/GetCurrentUser',
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` },
+                success: (user) => {
+                    $('#username').text(user.fullName);
+                    $('.role-content').hide();
+                    switch (user.roleId) {
+                        case 1:
+                            $('#for-admin').show();
+                            break;
+                        case 2:
+                            $('#for-teacher').show();
+                            break;
+                        case 3:
+                            $('#for-parent').show();
+                            break;
+                        case 4:
+                            $('#for-chef').show();
+                            break;
+                        default:
+                            // Handle unknown role
+                            console.error('Unknown role ID:', user.roleId);
+                    }
+                },
+                error: (err) => {
+                    console.error('Error fetching user:', err);
+                    window.location.href = 'login.html';
+                }
+            });
+
+            // Function to fetch and populate class and parent options
+            function populateSelectOptions() {
+                $.ajax({
+                    url: 'https://localhost:7201/api/Class/GetAll',
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    success: (classes) => {
+                        $('#addStudentClass').empty();
+                        $('#editStudentClass').empty();
+                        classes.forEach(cls => {
+                            $('#addStudentClass').append(`<option value="${cls.id}">${cls.name}</option>`);
+                            $('#editStudentClass').append(`<option value="${cls.id}">${cls.name}</option>`);
+                        });
+                    },
+                    error: (err) => { console.error('Error fetching classes:', err); }
+                });
+
+                $.ajax({
+                    url: 'https://localhost:7201/api/User/GetAll',
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    success: (users) => {
+                        $('#addStudentParent').empty();
+                        $('#editStudentParent').empty();
+                        users.filter(user => user.roleId === 3).forEach(parent => {
+                            $('#addStudentParent').append(`<option value="${parent.id}">${parent.fullName}</option>`);
+                            $('#editStudentParent').append(`<option value="${parent.id}">${parent.fullName}</option>`);
+                        });
+                    },
+                    error: (err) => { console.error('Error fetching parents:', err); }
+                });
+            }
+            // Call the function to populate select options
+            populateSelectOptions();
             // Function to fetch and display classes
             function fetchClasses() {
                 $.ajax({
@@ -44,16 +220,17 @@
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
-                    success: (data) => {
+                    success: (classes) => {
                         $('#classList').empty();
-                        if (data) {
-                            data.forEach((cls) => {
+                        if (classes) {
+                            classes.forEach((cls) => {
                                 $('#classList').append(`
                                     <div class="col-md-4 mb-3">
                                         <div class="card">
                                             <div class="card-body">
                                                 <h5 class="card-title">${cls.name}</h5>
-                                                <button class="btn btn-sm btn-outline-primary editClass" data-id="${cls.id}">Edit</button>
+                                                <button class="btn btn-sm btn-outline-primary viewClassDetails" data-id="${cls.id}">View Students</button>
+                                                <button class="btn btn-sm btn-outline-primary editClass" data-id="${cls.id}">Edit name</button>
                                             </div>
                                         </div>
                                     </div>
@@ -66,32 +243,163 @@
                     }
                 });
             }
-
             // Fetch classes on page load
             fetchClasses();
+            // Add new student button click handler
+            $('#addNewStudentButton').click(() => {
+                $('#addStudentModal').modal('show');
+            });
+            // Add student button click handler
+            $('#saveAddStudent').click(() => {
+                const fullName = $('#addStudentFullName').val();
+                const dob = $('#addStudentDob').val();
+                const mealLevel = $('#addStudentMealLevel').val();
+                const classId = $('#addStudentClass').val();
+                const parentId = $('#addStudentParent').val();
 
-            // Add class button click handler
-            $('#addClass').click(() => {
-                let className = $('#className').val();
+                if (fullName && dob && mealLevel && classId && parentId) {
+                    $.ajax({
+                        url: 'https://localhost:7201/api/Student/AddStudent',
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        contentType: 'application/json',
+                        data: JSON.stringify({ fullName, dob, mealLevel, classId, parentId }),
+                        success: (data) => {
+                            console.log('Student added successfully:', data);
+                            $('#addStudentModal').modal('hide');
+                            fetchStudents(classId); // Refresh student list after adding
+                        },
+                        error: (err) => { console.error('Error adding student:', err); }
+                    });
+                } else {
+                    alert('Please fill out all fields.');
+                }
+            });
+
+            // View class details button click handler
+            $(document).on('click', '.viewClassDetails', function () {
+                let classId = $(this).attr('data-id');
                 $.ajax({
-                    url: 'https://localhost:7201/api/Class/AddClass',
-                    method: 'POST',
+                    url: `https://localhost:7201/api/Student/GetStudentByClassId?classId=${classId}`,
+                    method: 'GET',
                     contentType: 'application/json; charset=utf-8',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
                     },
-                    data: JSON.stringify({ name: className }),
-                    success: (data) => {
-                        console.log('Class added successfully:', data);
-                        fetchClasses(); // Refresh class list after adding
-                        $('#className').val(''); // Clear input field
+                    success: (students) => {
+                        $('#studentList').empty();
+                        if (students) {
+                            students.forEach((student) => {
+                                $('#studentList').append(`
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="card-title">${student.fullName}</h5>
+                                                <p class="card-text">Date of Birth: ${new Date(student.dob).toLocaleDateString()}</p>
+                                                <p class="card-text">Meal Level: ${student.mealLevel}</p>
+                                                <p class="card-text">Parent: ${student.parentName}</p>
+                                                <button class="btn btn-sm btn-outline-primary editStudent" data-id="${student.id}">Edit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `);
+                            });
+                        }
+                        $('#classDetailsModal').modal('show');
                     },
                     error: (err) => {
-                        console.error('Error adding class:', err);
+                        console.error('Error fetching students:', err);
                     }
                 });
             });
+            // Edit student button click handler (event delegation)
+            $(document).on('click', '.editStudent', function () {
+                let studentId = $(this).attr('data-id');
+                $.ajax({
+                    url: `https://localhost:7201/api/Student/GetStudent/${studentId}`,
+                    method: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    success: (student) => {
+                        $('#editStudentId').val(student.id);
+                        $('#editStudentFullName').val(student.fullName);
+                        $('#editStudentDob').val(student.dob.split('T')[0]);
+                        $('#editStudentMealLevel').val(student.mealLevel);
+                        $('#editStudentClass').val(student.className);
+                        $('#editStudentParent').val(student.parentName);
+                        $('#editStudentModal').modal('show');
+                    },
+                    error: (err) => {
+                        console.error('Error fetching student details:', err);
+                    }
+                });
+            });
+            // Save changes button click handler
+            $('#saveEditStudent').click(() => {
+                let studentId = $('#editStudentId').val();
+                let fullName = $('#editStudentFullName').val();
+                let dob = $('#editStudentDob').val();
+                let mealLevel = $('#editStudentMealLevel').val();
+                let classId = $('#editStudentClass').val(); // Assuming you have a way to map className to classId
+                let parentId = $('#editStudentParent').val(); // Assuming you have a way to map parentName to parentId
 
+                if (!studentId || !fullName || !dob || !mealLevel || !classId || !parentId) {
+                    alert('All fields are required.');
+                    return;
+                }
+
+                $.ajax({
+                    url: `https://localhost:7201/api/Student/UpdateStudent/${studentId}`,
+                    method: 'PUT',
+                    contentType: 'application/json; charset=utf-8',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    data: JSON.stringify({ fullName, dob, mealLevel, classId, parentId }),
+                    success: (data) => {
+                        console.log('Student updated successfully:', data);
+                        $('#editStudentModal').modal('hide');
+                        // Refresh student list after update
+                        let classId = $('.viewClassDetails').attr('data-id');
+                        $.ajax({
+                            url: `https://localhost:7201/api/Student/GetStudentByClassId?classId=${classId}`,
+                            method: 'GET',
+                            contentType: 'application/json; charset=utf-8',
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                            },
+                            success: (students) => {
+                                $('#studentList').empty();
+                                if (students) {
+                                    students.forEach((student) => {
+                                        $('#studentList').append(`
+                                            <div class="col-md-4 mb-3">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">${student.fullName}</h5>
+                                                        <p class="card-text">Date of Birth: ${new Date(student.dob).toLocaleDateString()}</p>
+                                                        <p class="card-text">Meal Level: ${student.mealLevel}</p>
+                                                        <p class="card-text">Parent: ${student.parentName}</p>
+                                                        <button class="btn btn-sm btn-outline-primary editStudent" data-id="${student.id}">Edit</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `);
+                                    });
+                                }
+                            },
+                            error: (err) => {
+                                console.error('Error fetching students:', err);
+                            }
+                        });
+                    },
+                    error: (err) => {
+                        console.error('Error updating student:', err);
+                    }
+                });
+            });
             // Edit class button click handler (event delegation)
             $(document).on('click', '.editClass', function () {
                 let classId = $(this).attr('data-id');

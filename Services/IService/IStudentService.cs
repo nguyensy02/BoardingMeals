@@ -17,5 +17,6 @@ namespace Services.IService
 
         void UpdateStudent(Student student); 
 
+        List<Student> GetStudentsByClassId(int classId);
     }
 }

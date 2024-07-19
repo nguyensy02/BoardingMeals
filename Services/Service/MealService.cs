@@ -22,7 +22,10 @@ namespace Services.Service
         {
             try
             {
-                return _dao.AddMeal(meal);
+                if (!_dao.IsExistMeal(meal.ChefId, meal.Day, meal.Slot)) {
+                    return _dao.AddMeal(meal);
+                }
+                return -1;
             }
             catch (Exception)
             {

@@ -24,7 +24,7 @@ namespace API.Controllers
             _userService = userService;
         }
 
-        [Authorize(Roles = "admin, chef")]
+        [Authorize(Roles = "admin, chef, teacher, parent")]
         [HttpGet("[action]/{fromDate}/{toDate}")]
         public ActionResult GetMealByDate(DateTime fromDate, DateTime toDate)
         {
@@ -34,7 +34,7 @@ namespace API.Controllers
                 var mealFoods = m.MealFoods.ToList();
                 var foods = mealFoods.Select(mf => new FoodDTO
                 {
-                    Id = mf.Id,
+                    Id = mf.Food.Id,
                     Description = mf.Food.Description,
                     Name  = mf.Food.Name,
                 }).ToList();

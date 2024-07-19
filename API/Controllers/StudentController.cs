@@ -74,6 +74,7 @@ namespace API.Controllers
             var student = _studentService.GetStudent(id);
             var result = new StudentDTO
             {
+                Id = id,
                 ClassId = student.ClassId,
                 ClassName = student.Class.Name,
                 ParentId = student.ParentId,
@@ -82,6 +83,25 @@ namespace API.Controllers
                 FullName = student.FullName,
                 MealLevel = student.MealLevel
             };
+            return Ok(result);
+        }
+
+        [Authorize(Roles ="admin, teacher")]
+        [HttpGet("[action]")]
+        public IActionResult GetStudentByClassId(int classId) 
+        {
+            var students = _studentService.GetStudentsByClassId(classId);
+            var result = students.Select(s => new StudentDTO
+            {
+                Id  = s.Id,
+                ClassId = s.ClassId,
+                ClassName = s.Class.Name,
+                ParentId = s.ParentId,
+                ParentName = s.Parent.FullName,
+                Dob = s.Dob,
+                FullName = s.FullName,
+                MealLevel = s.MealLevel
+            });
             return Ok(result);
         }
     }

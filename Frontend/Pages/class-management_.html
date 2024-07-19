@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Management</title>
+    <link rel="stylesheet" href="./lib/bootstrap-4.3.1-dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <a href="home.html">Back to home</a>
+        <h1>Class Management</h1>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <input type="text" id="className" class="form-control" placeholder="Class Name">
+            </div>
+            <div class="col-md-4">
+                <button id="addClass" class="btn btn-primary">Add Class</button>
+            </div>
+        </div>
+        <div id="classList" class="row">
+            <!-- Class list will be dynamically populated here -->
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="./lib/jquery-3.7.1.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="./lib/bootstrap-4.3.1-dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(() => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+            $.ajax({
+                url: 'https://localhost:7201/api/User/GetCurrentUser',
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` },
+                success: (user) => {
+                    $('#username').text(user.fullName);
+                    $('.role-content').hide();
+                    switch (user.roleId) {
+                        case 1:
+                            $('#for-admin').show();
+                            break;
+                        case 2:
+                            $('#for-teacher').show();
+                            break;
+                        case 3:
+                            $('#for-parent').show();
+                            break;
+                        case 4:
+                            $('#for-chef').show();
+                            break;
+                        default:
+                            // Handle unknown role
+                            console.error('Unknown role ID:', user.roleId);
+                    }
+                },
+                error: (err) => {
+                    console.error('Error fetching user:', err);
+                    window.location.href = 'login.html';
+                }
+            });
+
+            // Function to fetch and display classes
+            function fetchClasses() {
+                $.ajax({
+                    url: 'https://localhost:7201/api/Class/GetAll',
+                    method: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    success: (data) => {
+                        $('#classList').empty();
+                        if (data) {
+                            data.forEach((cls) => {
+                                $('#classList').append(`
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h5 class="card-title">${cls.name}</h5>
+                                                <button class="btn btn-sm btn-outline-primary editClass" data-id="${cls.id}">Edit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `);
+                            });
+                        }
+                    },
+                    error: (err) => {
+                        console.error('Error fetching classes:', err);
+                    }
+                });
+            }
+
+            // Fetch classes on page load
+            fetchClasses();
+
+            // Add class button click handler
+            $('#addClass').click(() => {
+                let className = $('#className').val();
+                $.ajax({
+                    url: 'https://localhost:7201/api/Class/AddClass',
+                    method: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    data: JSON.stringify({ name: className }),
+                    success: (data) => {
+                        console.log('Class added successfully:', data);
+                        fetchClasses(); // Refresh class list after adding
+                        $('#className').val(''); // Clear input field
+                    },
+                    error: (err) => {
+                        console.error('Error adding class:', err);
+                    }
+                });
+            });
+
+            // Edit class button click handler (event delegation)
+            $(document).on('click', '.editClass', function () {
+                let classId = $(this).attr('data-id');
+                let newName = prompt('Enter new class name:');
+                if (newName !== null) {
+                    $.ajax({
+                        url: `https://localhost:7201/api/Class/UpdateClass/${classId}`,
+                        method: 'PUT',
+                        contentType: 'application/json; charset=utf-8',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        data: JSON.stringify({ name: newName }),
+                        success: (data) => {
+                            console.log('Class updated successfully:', data);
+                            fetchClasses(); // Refresh class list after update
+                        },
+                        error: (err) => {
+                            console.error('Error updating class:', err);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

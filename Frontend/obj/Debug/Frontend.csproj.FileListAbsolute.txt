@@ -1,0 +1,2 @@
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Frontend\obj\Debug\Frontend.csproj.AssemblyReference.cache
+D:\FPTU\Summer2024\PRN231\BoardingMeals\Frontend\obj\Debug\Frontend.csproj.CoreCompileInputs.cache

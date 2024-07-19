@@ -55,6 +55,19 @@ namespace Services.Service
             }
         }
 
+        public List<Student> GetStudentsByClassId(int classId)
+        {
+            try
+            {
+                return _dao.GetStudentsByClassId(classId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public void UpdateStudent(Student student)
         {
             try

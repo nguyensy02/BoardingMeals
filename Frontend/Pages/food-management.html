@@ -11,6 +11,7 @@
   </head>
   <body>
     <div class="container">
+      <a href="home.html">Back to home</a>
       <h1>Food Management</h1>
       <div id="food-list" class="mb-4"></div>
       <button id="add-food" class="btn btn-primary mb-3">Add Food</button>
@@ -36,6 +37,36 @@
           window.location.href = 'login.html';
           return;
         }
+        $.ajax({
+                url: 'https://localhost:7201/api/User/GetCurrentUser',
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` },
+                success: (user) => {
+                    $('#username').text(user.fullName);
+                    $('.role-content').hide();
+                    switch (user.roleId) {
+                        case 1:
+                            $('#for-admin').show();
+                            break;
+                        case 2:
+                            $('#for-teacher').show();
+                            break;
+                        case 3:
+                            $('#for-parent').show();
+                            break;
+                        case 4:
+                            $('#for-chef').show();
+                            break;
+                        default:
+                            // Handle unknown role
+                            console.error('Unknown role ID:', user.roleId);
+                    }
+                },
+                error: (err) => {
+                    console.error('Error fetching user:', err);
+                    window.location.href = 'login.html';
+                }
+            });
 
         const fetchFood = () => {
           $.ajax({
