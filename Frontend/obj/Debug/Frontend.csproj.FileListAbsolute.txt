@@ -1,0 +1,2 @@
+D:\BoardingMeals\Frontend\obj\Debug\Frontend.csproj.AssemblyReference.cache
+D:\BoardingMeals\Frontend\obj\Debug\Frontend.csproj.CoreCompileInputs.cache
