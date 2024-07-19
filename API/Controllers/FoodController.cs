@@ -55,7 +55,7 @@ namespace API.Controllers
             return Ok();
         }
 
-        [Authorize(Roles = "admin, chef")]
+        [Authorize(Roles = "admin, chef, teacher, parent")]
         [HttpGet("[action]/{id}")]
         public IActionResult GetFood(int id)
         {
